@@ -1,0 +1,40 @@
+{
+  "name": "@theroyalwhee0/zzzc",
+  "version": "0.0.1",
+  "description": "Sleepylang Compiler (zzzc)",
+  "main": "dist/index.js",
+  "license": "UNLICENCED",
+  "author": "Adam Mill <hismajesty@theroyalwhee.com>",
+  "private": true,
+  "devDependencies": {
+    "@types/chai": "4.3.1",
+    "@types/mocha": "9.1.1",
+    "@types/node": "^18.7.6",
+    "@types/sinon": "10.0.12",
+    "@types/yargs": "17.0.13",
+    "@typescript-eslint/eslint-plugin": "5.30.5",
+    "@typescript-eslint/parser": "5.30.5",
+    "chai": "4.3.6",
+    "eslint": "8.25.0",
+    "mocha": "10.0.0",
+    "sinon": "14.0.0",
+    "ts-node": "10.8.2",
+    "typescript": "4.7.4"
+  },
+  "dependencies": {
+    "@theroyalwhee0/istype": "3.0.2",
+    "yargs": "17.6.0"
+  },
+  "scripts": {
+    "build": "npm run lint && tsc",
+    "rebuild": "npm run clean && eslint . --max-warnings 0 && tsc --build --force",
+    "clean": "mkdir -p ./dist && [ ! -z \"$(find ./dist/ -maxdepth 1 -type f -print -quit)\" ] && rm -R ./dist/*; true",
+    "watch": "npm run build && tsc --watch",
+    "lint": "eslint .",
+    "test": "mocha --recursive --check-leaks --extension ts --require ts-node/register test/",
+    "test-watch": "mocha --reporter dot --recursive --check-leaks --extension ts --require ts-node/register --watch-files test/,src/ --watch test/",
+    "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test",
+    "audit": "npm audit --omit dev",
+    "zzzc": "npm run build && node dist/cli.js --"
+  }
+}
