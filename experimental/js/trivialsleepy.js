@@ -1,7 +1,9 @@
+#!/usr/bin/env node
+
 // Trivial implementation of Sleepy that will run in a browser or node.
 // This implementation does close-to-no error checking.
 function trivialSleepy(input, evaluator) {
-    const version = [0, 0, 1];
+    const sleepy_version = [0, 0, 1];
     const parsed = input
         // Split newlines.
         .split('\n')
@@ -13,7 +15,7 @@ function trivialSleepy(input, evaluator) {
         // Remove noops.
         .filter((_) => _?.length && _[0] !== '@noop');
     const compiled = [
-        ['@begin', version],
+        ['@begin', sleepy_version],
         ...partialCompiled,
         ['@end'],
     ];
@@ -58,7 +60,7 @@ const input = ` # This is a comment.
                 ["print-state", "name"]
                 ["print", "Goodbye."]
 `;
-trivialSleepy(input, (command, args, state) => {
+const { state } = trivialSleepy(input, (command, args, state) => {
     switch (command) {
         case 'print': {
             // eslint-disable-next-line no-undef
@@ -84,4 +86,5 @@ trivialSleepy(input, (command, args, state) => {
         }
     }
 });
-
+// eslint-disable-next-line no-undef
+console.log('> State = ', state);
