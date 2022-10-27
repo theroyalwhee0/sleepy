@@ -3,27 +3,20 @@ import * as readline from 'node:readline';
 import { Command, BlankCommand, CommentCommand, SyntaxErrorCommand, NoopCommand, ParseErrorCommand } from './commands/all';
 import { isArray } from '@theroyalwhee0/istype';
 import { UserCommand } from './commands';
+import { stringAsReadable } from '../src/utilities/stream';
 
-export type Parsed = {
-    parse: true
-    commands: Command[]
+export interface Parsed {
+    rows: Command[],
 }
 
 export async function parseText(input: string): Promise<Parsed> {
-    const stream = new Readable();
-    stream.push(input);
-    stream.push(null);
-    stream.toString = () => {
-        return input;
-    };
-    return parseStream(stream);
+    return parseStream(stringAsReadable(input));
 }
 
 export async function parseStream(input: Readable): Promise<Parsed> {
     const rl = readline.createInterface({ input });
     const result: Parsed = {
-        parse: true,
-        commands: [],
+        rows: [],
     };
     let count = 0;
     for await (const content of rl) {
@@ -65,7 +58,7 @@ export async function parseStream(input: Readable): Promise<Parsed> {
         }
         count += 1;
         cmd.content = content;
-        result.commands.push(cmd);
+        result.rows.push(cmd);
     }
     return result;
 }

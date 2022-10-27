@@ -1,5 +1,2 @@
 #!/usr/bin/env bash
-if [ ! -f "dist/cli.js" ]; then
-    npm run build
-fi
-node dist/cli.js -- $*
+npm run build && node -- dist/cli.js $*

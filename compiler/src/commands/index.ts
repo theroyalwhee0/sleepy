@@ -11,6 +11,7 @@ export interface ICommand {
     type: string,
     content?: string,
     error?: string,
+    toJSON(): unknown[]
 }
 
 export class Command implements ICommand {
@@ -20,6 +21,10 @@ export class Command implements ICommand {
     static #re_command = /^\s*\[.*\]\s*,?\s*$/;
     static is(value: string): boolean {
         return Command.#re_command.test(value);
+    }
+
+    toJSON(): unknown[] {
+        return [this.type];
     }
 }
 

@@ -2,37 +2,41 @@ import fs from 'node:fs';
 import { Readable } from 'node:stream';
 import { Command } from './commands/all';
 import { parseStream, parseText } from './parse';
+import { JsonValue } from './utilities/json';
 
-export type Compiled = {
-    compile: true,
-    commands: Command[]
-};
+export interface Compiled {
+    rows: CompiledRow[]
+}
 
 export async function compileFile(filename: string): Promise<Compiled> {
-    let stream;
+    const stream = fs.createReadStream(filename);
     try {
-        stream = fs.createReadStream(filename);
-        return compileStream(stream);
+        return await compileStream(stream);
     } finally {
-        stream && stream.close();
+        stream.close();
     }
 
 }
 
 export async function compileText(input: string): Promise<Compiled> {
-    const parsed = await parseText(input);
-    const result: Compiled = {
-        compile: true,
-        commands: parsed.commands,
-    };
-    return result;
+    const parsed = parseText(input);
+    return compileStream(parsed);
+}
+
+function optimizeRows(optimize: boolean, rows: Command[]): Command[] {
+    if (!optimize) {
+        return rows;
+    }
+    rows.filter((_) => {
+        return _.length;
+    });
 }
 
 export async function compileStream(input: Readable): Promise<Compiled> {
     const parsed = await parseStream(input);
+    const rows: CompiledRow[] = optimizeRows(true, parsed.rows);
     const result: Compiled = {
-        compile: true,
-        commands: parsed.commands,
+        rows,
     };
     return result;
 }

@@ -17,6 +17,8 @@ export class CommentCommand extends NoopCommand {
     static is(value: string): boolean {
         return CommentCommand.#re_comment.test(value);
     }
+
+
 }
 Object.defineProperty(CommentCommand.prototype, 'comment', { enumerable: true });
 
