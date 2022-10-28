@@ -40,9 +40,9 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 ## Links
 - Sleep Script: https://github.com/theroyalwhee0/sleepy
-- GitHub: https://github.com/theroyalwhee0/sleepyjs
+- GitHub: https://github.com/theroyalwhee0/sleepy/tree/main/sleepyjs
 - NPM: https://www.npmjs.com/package/@theroyalwhee0/sleepyjs
-- Changelog: https://github.com/theroyalwhee0/sleepyjs/blob/master/changelog.md
+- Changelog: https://github.com/theroyalwhee0/sleepy/blob/main/sleepyjs/changelog.md
 
 
 ## Legal & License

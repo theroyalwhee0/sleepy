@@ -7,13 +7,13 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 ## Implementations
 - [SleepyJs](https://github.com/theroyalwhee0/sleepy/tree/main/sleepyjs)
-- Trivial Examples
+- Trivial Examples:
   - [Trivial Sleepy JS](https://github.com/theroyalwhee0/sleepy/blob/main/experimental/js/trivialsleepy.js)
   - [Trivial Sleepy Python 3](https://github.com/theroyalwhee0/sleepy/blob/main/experimental/py/trivialsleepy.py)
 
 
 ## Goals
-- Simple to impliment parser and evaluation.
+- Simple to impliment parser and execute scripts.
 - Guarantee that script will exit.
 
 
