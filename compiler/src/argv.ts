@@ -12,7 +12,10 @@ export interface ArgvShape {
 export function getArgv(): ArgvShape {
     return yargs(hideBin(process.argv))
         .scriptName('zzzc')
-        .command('$0 <source> <target> [args]', 'Compile the source to the target location. Use - to output to stdout.')
+        .command(
+            '$0 <source> <target> [args]',
+            'Compile the source to the target location.'
+        )
         .demandCommand(1)
         .help()
         .alias('h', 'help')
