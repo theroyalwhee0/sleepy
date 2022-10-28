@@ -1,6 +1,7 @@
 import { Command, BlankCommand, CommentCommand, SyntaxErrorCommand, NoopCommand, ParseErrorCommand } from './commands/all';
 import { isArray } from '@theroyalwhee0/istype';
 import { UserCommand } from './commands';
+import { AwatedIterable } from './utilities/iter';
 
 export interface Parsed {
     rows: Command[],
@@ -11,7 +12,7 @@ export async function parseText(input: string): Promise<Parsed> {
     return parseIterable(lines);
 }
 
-export async function parseIterable(input: Iterable<string>): Promise<Parsed> {
+export async function parseIterable(input: AwatedIterable<string>): Promise<Parsed> {
     const result: Parsed = {
         rows: [],
     };

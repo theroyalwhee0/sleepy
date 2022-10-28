@@ -1,6 +1,7 @@
 import { CommandType } from './commands';
 import { Command } from './commands/all';
 import { Parsed, parseIterable, parseText } from './parse';
+import { AwatedIterable } from './utilities/iter';
 import { JsonValue } from './utilities/json';
 
 export type CompileOptions = {
@@ -22,7 +23,7 @@ export async function compileText(input: string, options?: CompileOptions): Prom
     return compileParsed(parsed, options);
 }
 
-export async function compileIterable(input: Iterable<string>, options?: CompileOptions): Promise<Compiled> {
+export async function compileIterable(input: AwatedIterable<string>, options?: CompileOptions): Promise<Compiled> {
     const parsed = await parseIterable(input);
     return compileParsed(parsed, options);
 }
