@@ -2,7 +2,7 @@
 
 
 ## What is this?
-Sleepy Script is a simple scripting system meant to be used when building lists of actions with parameters and a single shared state. Each entry is a single line and easy to parse and validate. It is untyped, but supports valid JSON types. 
+Sleepy Script is a simple scripting system meant to be used when building lists of actions with parameters and a single shared state. Each entry is a single line and easy to parse and validate. It is untyped, but supports valid JSON types. It does not support basic language features like functions, branches, or loops.
 
 
 ## Implementations
@@ -18,12 +18,12 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 
 ## Details.
-- There are no loops, or branches.
+- There are no functions, classes, loops, or branches.
 - It supports '\n' and '\r\n' newlines.
 
 
 ## Examples
-```py
+```rb
 # Single line comments are supported.
 # They may not be mixed with content.
 
@@ -54,7 +54,7 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 
 ## Hints
-- Python syntax highlighting works well on Sleepy Script.
+- PHP, Ruby and Python syntax highlighting work reasonably well on Sleepy Script.
 
 
 ## Links
