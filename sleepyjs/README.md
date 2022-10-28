@@ -8,6 +8,10 @@ Sleepy Script JS is an implementation of [Sleep Script](https://github.com/thero
 Sleepy Script is a simple scripting system meant to be used when building lists of actions with parameters and a single shared state. It does not support basic language features like functions, branches, or loops.
 
 
+## Installation
+`npm i @theroyalwhee0/sleepyjs`
+
+
 ## Examples
 ```rb
 # Single line comments are supported.

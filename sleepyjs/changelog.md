@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+
+
+## [0.0.2] - 2022-10-28
 ### Added
 - Cleanup readme.
 - Add missing license file.
