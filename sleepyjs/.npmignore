@@ -1,0 +1,4 @@
+.github/
+Trotfile.toml
+.env
+.npmrc
