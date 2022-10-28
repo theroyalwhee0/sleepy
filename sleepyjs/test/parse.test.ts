@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { parseIterable, parseText } from '../src/parse';
+import { mockAsyncIterable } from './mock';
 
 describe('parse', () => {
     describe('parseIterable', () => {
@@ -16,6 +17,24 @@ describe('parse', () => {
                 ],
             });
         });
+        it('should support async iterables', async () => {
+            const noopData = [
+                '["@noop"]',
+                ' ["@noop"]',
+                '  ["@noop"]',
+            ];
+            const iter = mockAsyncIterable(noopData);
+            const promise = parseIterable(iter);
+            expect(promise).to.be.a('promise');
+            const result = await promise;
+            expect(result).to.eql({
+                rows: [
+                    { type: '@noop', content: '["@noop"]' },
+                    { type: '@noop', content: ' ["@noop"]' },
+                    { type: '@noop', content: '  ["@noop"]' },
+                ],
+            });
+        });        
     });
     describe('parseText', () => {
         it('should be an function', () => {

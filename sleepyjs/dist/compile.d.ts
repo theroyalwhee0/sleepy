@@ -1,4 +1,5 @@
 import { Parsed } from './parse';
+import { AwatedIterable } from './utilities/iter';
 import { JsonValue } from './utilities/json';
 export declare type CompileOptions = {
     source?: string;
@@ -11,5 +12,5 @@ export interface Compiled {
     rows: CompiledRow[];
 }
 export declare function compileText(input: string, options?: CompileOptions): Promise<Compiled>;
-export declare function compileIterable(input: Iterable<string>, options?: CompileOptions): Promise<Compiled>;
+export declare function compileIterable(input: AwatedIterable<string>, options?: CompileOptions): Promise<Compiled>;
 export declare function compileParsed(parsed: Parsed, options?: CompileOptions): Promise<Compiled>;

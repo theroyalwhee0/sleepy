@@ -2,6 +2,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { compileText, compileIterable, compileParsed } from '../src/compile';
 import { variesChaiEql } from './patch-eql';
+import { mockAsyncIterable } from './mock';
 
 const varies = variesChaiEql();
 
@@ -22,6 +23,26 @@ describe('compile', () => {
                 ['@end'],
             ]);
         });
+        it('should support async iterables', async () => {
+            const noopData = [
+                '["@noop"]',
+                ' ["@noop"]',
+                '  ["@noop"]',
+            ];
+            const iter = mockAsyncIterable(noopData);
+            const promise = compileIterable(iter, { optimize: false });
+            expect(promise).to.be.a('promise');
+            const result = await promise;
+            expect(result).to.eql({
+                rows: [
+                    ['@begin', sleepy_version],
+                    ['@noop'],
+                    ['@noop'],
+                    ['@noop'],
+                    ['@end'],
+                ],
+            });
+        });          
     });
     describe('compileParsed', () => {
         it('should be an function', () => {
