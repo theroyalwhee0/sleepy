@@ -1,6 +1,7 @@
 # Changelog
 
 ## [Unreleased]
+- Remove unneeded devDependencies.
 
 
 ## [0.0.2] - 2022-10-28
