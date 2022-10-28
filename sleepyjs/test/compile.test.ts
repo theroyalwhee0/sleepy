@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { compileText, compileIterable, compileParsed } from '../src/compile';
 import { variesChaiEql } from './patch-eql';
-import { mockAsyncIterable } from './mock'
+import { mockAsyncIterable } from './mock';
 
 const varies = variesChaiEql();
 

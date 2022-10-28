@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { parseIterable, parseText } from '../src/parse';
-import { mockAsyncIterable } from './mock'
+import { mockAsyncIterable } from './mock';
 
 describe('parse', () => {
     describe('parseIterable', () => {
