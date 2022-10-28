@@ -1,6 +1,6 @@
 {
   "name": "@theroyalwhee0/sleepyjs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Sleepy Script JS Library",
   "main": "dist/index.js",
   "license": "UNLICENCED",
