@@ -1,3 +1,3 @@
 [actions]
 trivialjs='experimental/js/trivialsleepy.js'
-trivialpy3='experimental/py/trivialsleepy.py'
+trivialpy='experimental/py/trivialsleepy.py'
