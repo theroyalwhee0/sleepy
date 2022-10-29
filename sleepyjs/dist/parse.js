@@ -31,7 +31,7 @@ async function parseIterable(input) {
             catch (err) {
                 if (err instanceof Error && err.name === 'SyntaxError') {
                     // If JSON Parse Syntax Error...
-                    cmd = new all_1.ParseErrorCommand(err, item, count);
+                    cmd = new all_1.ParseErrorCommand(err, count);
                 }
                 else {
                     // Else rethrow...

@@ -5,13 +5,12 @@ export declare class ErrorCommand extends Command {
     message: string;
     type: CommandType;
     line: number;
+    constructor(error: string, message?: string, line?: number);
     toJSON(): JsonValue[];
 }
 export declare class SyntaxErrorCommand extends ErrorCommand {
-    error: string;
+    constructor(message?: string, line?: number);
 }
 export declare class ParseErrorCommand extends ErrorCommand {
-    error: string;
-    message: string;
-    constructor(err: Error, content: string, line: number);
+    constructor(err?: Error, line?: number);
 }

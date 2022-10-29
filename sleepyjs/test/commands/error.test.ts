@@ -34,7 +34,7 @@ describe('command errors', () => {
         it('should be able to create instance', () => {
             let error:Error;
             try {
-                JSON.parse(' "@noop" ]')
+                JSON.parse(' "@noop" ]');
                 expect.fail('Expected parse to fail.');
             } catch(err) {
                 error = err;
