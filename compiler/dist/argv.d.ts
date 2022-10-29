@@ -1,8 +1,8 @@
 export interface ArgvShape {
-    [x: string]: unknown;
+    [key: string]: unknown;
     _: (string | number)[];
     $0: string;
     source: string;
     target: string;
 }
-export declare function getArgv(): ArgvShape;
+export declare function getArgv(value?: string[], exit?: boolean): ArgvShape;

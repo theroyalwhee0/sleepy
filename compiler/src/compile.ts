@@ -1,15 +1,11 @@
-import { Compiled, compileIterable } from '@theroyalwhee0/sleepyjs';
-import fs, { ReadStream } from 'node:fs';
+import fs from 'node:fs';
+import { compileIterable, Compiled, CompileOptions } from '@theroyalwhee0/sleepyjs';
 
-export async function compileFile(filename: string): Promise<Compiled> {
-    const stream = fs.createReadStream(filename);
+export async function compileFile(filename: string, options?: CompileOptions): Promise<Compiled> {
+    const stream = fs.createReadStream(filename, 'utf8');
     try {
-        return await compileReadStream(stream);
+        return await compileIterable(stream, options);
     } finally {
         stream.close();
     }
-}
-
-export async function compileReadStream(input: ReadStream, close?:boolean): Promise<Compiled> {
-    return compileIterable(input);
 }

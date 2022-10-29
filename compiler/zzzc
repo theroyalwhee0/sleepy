@@ -1,2 +1,5 @@
 #!/usr/bin/env bash
-npm run build && node -- dist/cli.js $*
+#npm run build && node -- dist/cli.js $*
+npm run build && node -- dist/cli.js ./cases/noop.zzz ./out
+
+

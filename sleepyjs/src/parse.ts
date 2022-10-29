@@ -31,7 +31,7 @@ export async function parseIterable(input: AwatedIterable<string>): Promise<Pars
             } catch (err) {
                 if (err instanceof Error && err.name === 'SyntaxError') {
                     // If JSON Parse Syntax Error...
-                    cmd = new ParseErrorCommand(err, item, count);
+                    cmd = new ParseErrorCommand(err, count);
                 } else {
                     // Else rethrow...
                     throw err;
@@ -45,11 +45,11 @@ export async function parseIterable(input: AwatedIterable<string>): Promise<Pars
                         cmd = UserCommand.create(data as unknown[]);
                     }
                 } else {
-                    cmd = new SyntaxErrorCommand();
+                    cmd = new SyntaxErrorCommand('Expected command.');
                 }
             }
         } else {
-            cmd = new SyntaxErrorCommand();
+            cmd = new SyntaxErrorCommand('Syntax error.');
         }
         if (!cmd) {
             throw new Error('Expected command to be populated.');

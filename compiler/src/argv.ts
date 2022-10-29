@@ -2,15 +2,16 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
 export interface ArgvShape {
-    [x: string]: unknown;
+    [key: string]: unknown;
     _: (string | number)[];
     $0: string;
     source: string;
     target: string;
 }
 
-export function getArgv(): ArgvShape {
-    return yargs(hideBin(process.argv))
+export function getArgv(value?:string[], exit:boolean=true): ArgvShape {
+    value = value ?? process.argv;
+    return yargs(hideBin(value))
         .scriptName('zzzc')
         .command(
             '$0 <source> <target> [args]',
@@ -19,6 +20,7 @@ export function getArgv(): ArgvShape {
         .demandCommand(1)
         .help()
         .alias('h', 'help')
+        .exitProcess(exit)
         .strict()
         .parseSync() as ArgvShape;
 }
