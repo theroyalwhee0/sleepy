@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 
+## [0.0.4] - 2022-10-29
+### Changed
+- Improve ErrorCommand details.
+
+
 ## [0.0.3] - 2022-10-28
 ### Changed
 - Change compileIterable & parseIterable to support AsyncIterable<string>.
