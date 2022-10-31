@@ -2,8 +2,8 @@
 
 # Trivial implementation of Sleepy that will run in Python3
 # This implementation does close-to-no error checking.
-import re, json
-def trivialSleepy(input, evaluator):
+import asyncio, re, json
+async def trivialSleepy(input, evaluator):
     SLEEPY_VERSION = [0, 0, 1]
     parsed = [
         json.loads(_.rstrip(',')) for _ in
@@ -28,7 +28,7 @@ def trivialSleepy(input, evaluator):
             state[first[1:]] = rest[0]
         else:
             # Call evaluator.
-            evaluator(first, rest, state)
+            await evaluator(first, rest, state)
     return {
         # Return the state.
         "state": state
@@ -36,34 +36,43 @@ def trivialSleepy(input, evaluator):
 
 # ---------------------------------------------------------------------
 
-input = """ # This is a comment.
+async def main():
+    input = """ # This is a comment.
 
-            [],
-            ["@noop"],
-            ["$name", "Bob Smith"]
-            ["$counter", 0]
-            ["add"]
-            ["print", "Hello World!"]
-            ["print-state", "counter"]
-            ["add", 2]
-            ["print-state", "counter"]
-            ["raise", 2]
-            ["print-state", "counter"]
-            ["print-state", "name"]
-            ["print", "Goodbye."]
-"""
-def myEvaluator(command, args, state):
-    if command == "print":
-        print('>', *args)
-    elif command == 'print-state':
-        key = args[0]
-        print("> State '{}' = {}".format(key, state[key]))
-    elif command == 'add':
-        state['counter'] += args[0] if len(args) > 0 else 1
-    elif command == 'raise':
-        state['counter'] **= args[0] if len(args) > 0 else 1
-    else:
-        raise Exception("Runtime Error: Unrecognized command '{}'" % (command))
+                [],
+                ["@noop"],
+                ["$name", "Bob Smith"]
+                ["$counter", 0]
+                ["add"]
+                ["print", "Hello World!"]
+                ["sleep"]                
+                ["print-state", "counter"]
+                ["add", 2]
+                ["print-state", "counter"]
+                ["raise", 2]
+                ["print-state", "counter"]
+                ["print-state", "name"]
+                ["print", "Goodbye."]
+    """
+    async def myEvaluator(command, args, state):
+        if command == "print":
+            print('>', *args)
+        elif command == "sleep":
+            seconds = 1
+            if len(args) > 0:
+                seconds = int(args[0])/1000
+            await asyncio.sleep(seconds)
+        elif command == 'print-state':
+            key = args[0]
+            print("> State '{}' = {}".format(key, state[key]))
+        elif command == 'add':
+            state['counter'] += args[0] if len(args) > 0 else 1
+        elif command == 'raise':
+            state['counter'] **= args[0] if len(args) > 0 else 1
+        else:
+            raise Exception("Runtime Error: Unrecognized command '{}'".format((command)))
 
-result = trivialSleepy(input, myEvaluator)
-print('> State = {}'.format(result["state"]))
+    result = await trivialSleepy(input, myEvaluator)
+    print('> State = {}'.format(result["state"]))
+
+asyncio.run(main())

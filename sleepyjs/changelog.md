@@ -1,12 +1,9 @@
 # Changelog
 
-## [Unreleased]
-
-
-## [0.0.4] - 2022-10-29
+## [0.0.4] - 2022-10-31
 ### Changed
 - Improve ErrorCommand details.
-
+- Add execIterable.
 
 ## [0.0.3] - 2022-10-28
 ### Changed
@@ -15,13 +12,11 @@
 ### Removed
 - Remove unneeded devDependencies.
 
-
 ## [0.0.2] - 2022-10-28
 ### Added
 - Add missing license file.
 ### Changed
 - Cleanup readme.
-
 
 ## [0.0.1] - 2022-10-27
 ### Added
@@ -29,3 +24,6 @@
 - Compile from string or Iterable<string>.
 - Serialize compiled code to string.
 - Initial release.
+
+
+## [Unreleased]
