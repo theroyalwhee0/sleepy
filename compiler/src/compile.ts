@@ -1,42 +1,11 @@
 import fs from 'node:fs';
-import { Readable } from 'node:stream';
-import { Command } from './commands/all';
-import { parseStream, parseText } from './parse';
-import { JsonValue } from './utilities/json';
+import { compileIterable, Compiled, CompileOptions } from '@theroyalwhee0/sleepyjs';
 
-export interface Compiled {
-    rows: CompiledRow[]
-}
-
-export async function compileFile(filename: string): Promise<Compiled> {
-    const stream = fs.createReadStream(filename);
+export async function compileFile(filename: string, options?: CompileOptions): Promise<Compiled> {
+    const stream = fs.createReadStream(filename, 'utf8');
     try {
-        return await compileStream(stream);
+        return await compileIterable(stream, options);
     } finally {
         stream.close();
     }
-
-}
-
-export async function compileText(input: string): Promise<Compiled> {
-    const parsed = parseText(input);
-    return compileStream(parsed);
-}
-
-function optimizeRows(optimize: boolean, rows: Command[]): Command[] {
-    if (!optimize) {
-        return rows;
-    }
-    rows.filter((_) => {
-        return _.length;
-    });
-}
-
-export async function compileStream(input: Readable): Promise<Compiled> {
-    const parsed = await parseStream(input);
-    const rows: CompiledRow[] = optimizeRows(true, parsed.rows);
-    const result: Compiled = {
-        rows,
-    };
-    return result;
 }

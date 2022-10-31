@@ -6,13 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getArgv = void 0;
 const yargs_1 = __importDefault(require("yargs"));
 const helpers_1 = require("yargs/helpers");
-function getArgv() {
-    return (0, yargs_1.default)((0, helpers_1.hideBin)(process.argv))
+function getArgv(value, exit = true) {
+    value = value ?? process.argv;
+    return (0, yargs_1.default)((0, helpers_1.hideBin)(value))
         .scriptName('zzzc')
-        .command('$0 <source> <target> [args]', 'Compile the source to the target location. Use - to output to stdout.')
+        .command('$0 <source> <target> [args]', 'Compile the source to the target location.')
         .demandCommand(1)
         .help()
         .alias('h', 'help')
+        .exitProcess(exit)
         .strict()
         .parseSync();
 }
