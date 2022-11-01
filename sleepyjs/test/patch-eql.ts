@@ -1,5 +1,5 @@
 // This is a hacky monkey-patch of Chai deep-equals functionality to add a custom comparator
-// to do type check and regexp matching during equality. It does not produce nice error messages.
+// to do type check and regexp matching during deep equality. It does not produce nice error messages.
 
 import { isString, isNumber, isArray, isObject } from '@theroyalwhee0/istype';
 import { DeepEqualOptions } from 'deep-eql';
@@ -10,7 +10,7 @@ import { DeepEqualOptions } from 'deep-eql';
 const chaiUtils = require('chai/lib/chai/utils/index.js');
 
 /**
- * IsVaries symbol to flag what entries belong to this module.
+ * IsVaries symbol to flag what entries belonging to this module.
  */
 const IsVaries = Symbol('IsVaries');
 

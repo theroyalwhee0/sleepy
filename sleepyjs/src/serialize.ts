@@ -4,13 +4,13 @@ export type SerializeOptions = {
     pretty?: boolean, // true = pretty, false of undefined to turn off
 };
 
-export function serializeCompiled(compiled: Compiled, options?: SerializeOptions): string {
+export async function* serializeCompiled(compiled: Compiled, options?: SerializeOptions): AsyncGenerator<string> {
     const pretty = options?.pretty ?? false;
-    return compiled.rows.map((value): string => {
+    for await (const value of compiled.rows()) {
         if (pretty) {
-            return JSON.stringify(value, null, ' ').replace(/\s*\n\s*/g, ' ');
+            yield JSON.stringify(value, null, ' ').replace(/\s*\n\s*/g, ' ');
         } else {
-            return JSON.stringify(value);
+            yield JSON.stringify(value);
         }
-    }).join('\n');
+    }
 }

@@ -1,5 +1,4 @@
-import { CommandType } from './commands';
-import { Command } from './commands/all';
+import { Command, CommandType } from './commands';
 import { Parsed, parseIterable, parseText } from './parse';
 import { AwatedIterable } from './utilities/iter';
 import { JsonValue } from './utilities/json';
@@ -15,7 +14,7 @@ export const sleepy_version = [0, 0, 1];
 export type CompiledRow = JsonValue[];
 
 export interface Compiled {
-    rows: CompiledRow[]
+    rows: () => AsyncIterable<CompiledRow>,
 }
 
 export async function compileText(input: string, options?: CompileOptions): Promise<Compiled> {
@@ -27,36 +26,33 @@ export async function compileIterable(input: AwatedIterable<string>, options?: C
     const parsed = await parseIterable(input);
     return compileParsed(parsed, options);
 }
-
-function optimizeRows(optimize: boolean) {
-    if (optimize === true) {
-        return (_: Command) => _.type !== CommandType.Noop;
-    }
-    return () => true;
+export function compileParsed(parsed: Parsed, options?: CompileOptions): Compiled {
+    const now = new Date();
+    return {
+        async *rows(): AsyncIterable<CompiledRow> {
+            const optimize = options?.optimize ?? true;
+            const includeCompileInfo = options?.info ?? false;
+            const sourceName = options?.source ?? '';
+            yield ['@begin', sleepy_version];
+            if (includeCompileInfo) {
+                yield ['@meta', '@date', now.toISOString()];
+                if (sourceName) {
+                    yield ['@meta', '@source', sourceName];
+                }
+            }
+            for await (const item of parsed.rows()) {
+                if (includeRow(optimize, item)) {
+                    yield item.toJSON();
+                }
+            }
+            yield ['@end'];
+        },
+    };
 }
 
-export async function compileParsed(parsed: Parsed, options?: CompileOptions): Promise<Compiled> {
-    const now = new Date();
-    const optimize = options?.optimize ?? true;
-    const includeCompileInfo = options?.info ?? false;
-    const sourceName = options?.source ?? '';
-    const compileInfo = [];
-    if (includeCompileInfo) {
-        compileInfo.push(['@meta', '@date', now.toISOString()]);
-        if (sourceName) {
-            compileInfo.push(['@meta', '@source', sourceName]);
-        }
+function includeRow(optimize: boolean, cmd: Command) {
+    if (optimize === true) {
+        return cmd.type !== CommandType.Noop;
     }
-    const rows = ([] as CompiledRow[]).concat(
-        [['@begin', sleepy_version]],
-        compileInfo,
-        parsed.rows
-            .filter(optimizeRows(optimize))
-            .map((_) => _.toJSON()),
-        [['@end']],
-    );
-    const result: Compiled = {
-        rows,
-    };
-    return result;
+    return true;
 }

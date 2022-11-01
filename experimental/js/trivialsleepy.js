@@ -22,11 +22,14 @@ async function trivialSleepy(input, evaluator) {
     const state = {};
     for (let [first, ...rest] of compiled) {
         const ch = first[0] || '';
-        if (first === '@feature') {
-            throw new Error('trivialSleepy does not support features');
-        } else if (ch === '@') {
-            // Ignore language commands.
-            continue;
+        if (ch === '@') {
+            switch (first) {
+                case '@set': {
+                    // Declare state variables.
+                    state[rest[0]] = rest[1];
+                    break;
+                }
+            }
         } else if (ch === '$') {
             // Declare state variables.
             state[first.replace(/^\$/, '')] = rest[0];
@@ -47,7 +50,7 @@ async function main() {
 
                     [],
                     ["@noop"],
-                    ["$name", "Bob Smith"]
+                    ["@set", "name", "Bob Smith"]
                     ["$counter", 0]
                     ["add"]
                     ["print", "Hello World!"]

@@ -1,4 +1,4 @@
-import { Command, CommandType } from '.';
+import { Command, CommandType } from './command';
 import { JsonValue } from '../utilities/json';
 
 export class ErrorCommand extends Command {
@@ -7,16 +7,16 @@ export class ErrorCommand extends Command {
     type = CommandType.Error;
     line = 0;
 
-    constructor(error:string, message?:string, line?:number) {
+    constructor(error: string, message?: string, line?: number) {
         super();
-        if(error !== undefined) {
+        if (error !== undefined) {
             this.error = error;
         }
-        if(message !== undefined) {
+        if (message !== undefined) {
             this.message = message;
         }
-        if(line !== undefined) {
-            this.line = line+1;
+        if (line !== undefined) {
+            this.line = line + 1;
         }
     }
 
@@ -30,7 +30,7 @@ export class ErrorCommand extends Command {
 }
 
 export class SyntaxErrorCommand extends ErrorCommand {
-    constructor(message?:string, line?:number) {
+    constructor(message?: string, line?: number) {
         super('syntax', message, line);
     }
 }

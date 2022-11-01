@@ -1,4 +1,4 @@
-import { Command, CommandType } from '.';
+import { Command, CommandType } from './command';
 
 export class EndCommand extends Command {
     type = CommandType.End;

@@ -32,11 +32,11 @@ describe('command errors', () => {
             expect(ParseErrorCommand).to.be.a('function');
         });
         it('should be able to create instance', () => {
-            let error:Error;
+            let error: Error;
             try {
                 JSON.parse(' "@noop" ]');
                 expect.fail('Expected parse to fail.');
-            } catch(err) {
+            } catch (err) {
                 error = err;
             }
             const cmd = new ParseErrorCommand(error, 30);

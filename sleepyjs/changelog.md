@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
+- Add support for `[ '@set', name, value ]` to set state values.
+- Fixed bug with UserCommand arguments not matching JSON types.
+- Improved testing.
+
+
 ## [0.0.4] - 2022-10-31
 ### Changed
 - Improve ErrorCommand details.
@@ -24,6 +32,3 @@
 - Compile from string or Iterable<string>.
 - Serialize compiled code to string.
 - Initial release.
-
-
-## [Unreleased]

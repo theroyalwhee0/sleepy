@@ -1,62 +1,69 @@
-import { Command, BlankCommand, CommentCommand, SyntaxErrorCommand, NoopCommand, ParseErrorCommand } from './commands/all';
-import { isArray } from '@theroyalwhee0/istype';
-import { UserCommand } from './commands';
-import { AwatedIterable } from './utilities/iter';
+import { isArray, isString } from '@theroyalwhee0/istype';
+import {
+    Command, BlankCommand, CommentCommand, SyntaxErrorCommand,
+    UserCommand, NoopCommand, ParseErrorCommand,
+} from './commands';
+import { AwatedIterable, iterateLines } from './utilities/iter';
 
 export interface Parsed {
-    rows: Command[],
+    rows: () => AsyncIterable<Command>,
 }
 
-export async function parseText(input: string): Promise<Parsed> {
-    const lines = input === '' ? [] : input.split(/\r\n|\n/);
-    return parseIterable(lines);
+export function parseText(input: string): Parsed {
+    return parseIterable(iterateLines(input));
 }
 
-export async function parseIterable(input: AwatedIterable<string>): Promise<Parsed> {
-    const result: Parsed = {
-        rows: [],
+export function parseIterable(input: AwatedIterable<string>): Parsed {
+    return {
+        async *rows(): AsyncIterable<Command> {
+            let idx = 0;
+            for await (const item of input) {
+                yield parseSingleCommand(item, idx);
+                idx++;
+            }
+        },
     };
-    let count = 0;
-    for await (const item of input) {
-        let cmd: Command | undefined = undefined;
-        if (BlankCommand.is(item)) {
-            cmd = new BlankCommand();
-        } else if (CommentCommand.is(item)) {
-            cmd = new CommentCommand();
-        } else if (Command.is(item)) {
-            const text = item.replace(/,$/, '');
-            let data: unknown;
-            try {
-                data = JSON.parse(text);
-            } catch (err) {
-                if (err instanceof Error && err.name === 'SyntaxError') {
-                    // If JSON Parse Syntax Error...
-                    cmd = new ParseErrorCommand(err, count);
-                } else {
-                    // Else rethrow...
-                    throw err;
-                }
+}
+
+function parseSingleCommand(item: string, lineNum = 0) {
+    let cmd: Command | undefined = undefined;
+    if (BlankCommand.is(item)) {
+        cmd = new BlankCommand();
+    } else if (CommentCommand.is(item)) {
+        cmd = new CommentCommand();
+    } else if (Command.is(item)) {
+        const text = item.replace(/,$/, '');
+        let data: unknown;
+        try {
+            data = JSON.parse(text);
+        } catch (err) {
+            if (err instanceof Error && err.name === 'SyntaxError') {
+                // If JSON Parse Syntax Error...
+                cmd = new ParseErrorCommand(err, lineNum);
+            } else {
+                // Else rethrow...
+                throw err;
             }
-            if (!cmd) {
-                if (isArray(data)) {
-                    if (data.length === 0) {
-                        cmd = new NoopCommand();
-                    } else {
-                        cmd = UserCommand.create(data as unknown[]);
-                    }
-                } else {
-                    cmd = new SyntaxErrorCommand('Expected command.');
-                }
-            }
-        } else {
-            cmd = new SyntaxErrorCommand('Syntax error.');
         }
         if (!cmd) {
-            throw new Error('Expected command to be populated.');
+            if (isArray(data)) {
+                if (data.length === 0) {
+                    cmd = new NoopCommand();
+                } else if (isString(data[0])) {
+                    cmd = UserCommand.create(data as unknown[]);
+                } else {
+                    cmd = new SyntaxErrorCommand('Expected command name to be a string.');
+                }
+            } else {
+                cmd = new SyntaxErrorCommand('Expected command.');
+            }
         }
-        count += 1;
-        cmd.content = item;
-        result.rows.push(cmd);
+    } else {
+        cmd = new SyntaxErrorCommand('Syntax error.');
     }
-    return result;
+    if (!cmd) {
+        throw new Error('Expected command to be populated.');
+    }
+    cmd.content = item;
+    return cmd;
 }
