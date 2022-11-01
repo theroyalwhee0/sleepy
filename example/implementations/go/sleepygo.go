@@ -36,12 +36,12 @@ func trivialSleepy(input string, evaluator func(command string, args []interface
         }
     }
     compiled = append(compiled, []interface{}{"@end"})
+    // Evaluate.
     state := map[string]interface{}{}
     for _, item := range compiled {
         first := item[0].(string)
         rest := item[1:]
         ch := first[0:1]
-        // fmt.Printf("> item = %s %s %s\n", ch, first, rest)
         if ch == "@" {
             if first == "@set" {
                 state[rest[0].(string)] = rest[1]
