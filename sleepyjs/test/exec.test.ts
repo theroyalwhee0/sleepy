@@ -4,6 +4,7 @@ import { describe, it } from 'mocha';
 import { Evaluator, execCompiled, SleepyContext } from '../src/exec';
 import { JsonValue } from '../src/utilities/json';
 import { mockCompiled } from './mock';
+import { SleepyError } from '../src/errors/sleepyerror';
 
 describe('exec', () => {
     describe('execCompiled', () => {
@@ -61,6 +62,7 @@ describe('exec', () => {
         ): Promise<void> => {
             switch (command) {
                 case 'sleep': {
+                    // An async command...
                     await new Promise<void>((resolve) => {
                         const ms = (args[0] as number) ?? 100;
                         setTimeout(() => resolve(), ms);
@@ -68,24 +70,28 @@ describe('exec', () => {
                     break;
                 }
                 case 'print': {
+                    // A command that consumes a variable number of arguments.
                     print.push(`> ${args.join(' ')}`);
                     break;
                 }
                 case 'print-state': {
+                    // A command that consumes state.
                     const key = (args[0] as keyof MyState) || '';
                     print.push(`> State "${key}" = ${ctx.state[key]}`);
                     break;
                 }
                 case 'add': {
+                    // A command that mutates state and consumes an argument.
                     ctx.state.counter += (args[0] as number) || 1;
                     break;
                 }
                 case 'raise': {
+                    // A command that mutates state and consumes an argument.
                     ctx.state.counter **= (args[0] as number) || 1;
                     break;
                 }
                 default: {
-                    throw new Error(`Runtime Error: Unrecognized command '${command}'`);
+                    expect.fail(`Unrecognized command '${command}'`);
                 }
             }
         });
@@ -135,5 +141,41 @@ describe('exec', () => {
         });
         const evaluatorSpy = evaluator as SinonSpy;
         expect(evaluatorSpy.callCount).to.equal(0);
+    });
+    it('should catch and wrap errors thrown by commands', async () => {
+        const simpleScript = [
+            ['@begin', [0, 0, 1]],
+            ['causeError'],
+            ['@end'],
+        ];
+        const compiled = mockCompiled(simpleScript);
+        type MyState = {
+            name: string,
+            counter: number,
+        }
+        const evaluator = spy<Evaluator<MyState>>(async (
+            ctx: SleepyContext<MyState>,
+            command: string,
+            ..._args: JsonValue[]
+        ): Promise<void> => {
+            if (command === 'causeError') {
+                throw new Error('Something went wrong');
+            } else {
+                expect.fail(`Unrecognized command '${command}'`);
+            }
+        });
+        try {
+            await execCompiled(compiled, evaluator);
+            expect.fail('Should have thrown');
+        } catch (err) {
+            expect(err.message).to.equal('Something went wrong');
+            expect(err.parent?.message).to.equal('Something went wrong');
+            expect(err).to.be.an.instanceOf(SleepyError);
+            if (err instanceof SleepyError) {
+                expect(err.lineNum).to.equal(2);
+            }
+        }
+        const evaluatorSpy = evaluator as SinonSpy;
+        expect(evaluatorSpy.callCount).to.equal(1);
     });
 });

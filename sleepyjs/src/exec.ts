@@ -1,5 +1,6 @@
 import { isString } from '@theroyalwhee0/istype';
 import { Compiled } from './compile';
+import { ExecError } from './errors/execerror';
 import { JsonValue } from './utilities/json';
 
 
@@ -8,7 +9,7 @@ export type SleepyState = {
 }
 
 export type SleepyContext<TState extends SleepyState = SleepyState> = {
-    lineCount: number,
+    lineNum: number,
     state: TState,
 }
 
@@ -25,16 +26,17 @@ export async function execCompiled<TState extends SleepyState = SleepyState>(
 ): Promise<{ state: TState }> {
     const state: TState = {} as TState;
     const ctx: SleepyContext<TState> = {
-        lineCount: 0,
+        lineNum: 0,
         state,
     };
     for await (const item of compiled.rows()) {
+        ctx.lineNum += 1;
         if (item.length === 0) {
-            throw new Error('Expected row to have a command name.');
+            throw new ExecError('Expected row to have a command name', ctx.lineNum);
         }
         const [command, ...rest] = item;
         if (!isString(command)) {
-            throw new Error('Expected command name to be a string.');
+            throw new ExecError('Expected command name to be a string', ctx.lineNum);
         }
         const ch = command[0] || '';
         if (ch === '@') {
@@ -42,7 +44,7 @@ export async function execCompiled<TState extends SleepyState = SleepyState>(
             switch (command) {
                 case '@set': {
                     if (!isString(rest[0])) {
-                        throw new Error('Expected key name to be a string.');
+                        throw new ExecError('Expected key name to be a string', ctx.lineNum);
                     }
                     const key = (rest[0] || '');
                     (state as SleepyState)[key] = rest[1];
@@ -55,9 +57,12 @@ export async function execCompiled<TState extends SleepyState = SleepyState>(
             (state as SleepyState)[key] = rest[0];
         } else {
             // Call the evaluator.
-            await evaluator(ctx, command, ...rest);
+            try {
+                await evaluator(ctx, command, ...rest);
+            } catch (err) {
+                throw new ExecError(err.message, ctx.lineNum, err);
+            }
         }
-        ctx.lineCount += 1;
     }
     return { state };
 }

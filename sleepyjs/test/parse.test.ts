@@ -1,8 +1,11 @@
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { describe, it } from 'mocha';
-import { expect } from 'chai';
+import { ParseError } from '../src/errors/parseerror';
 import { parseIterable, parseText } from '../src/parse';
 import { asyncIterabletoArray, mockAsyncIterable } from './mock';
 
+chai.use(chaiAsPromised);
 
 describe('parse', () => {
     describe('parseIterable', () => {
@@ -100,36 +103,41 @@ describe('parse', () => {
         });
         describe('should handle malformed commands', () => {
             it('with unmatched quotes', async () => {
-                const trailingCommas = `["print", "Hello World!"]
+                const unmatchedQuote = `["print", "Hello World!"]
+                    # There is an unmatched quote in the next line
                     [ "sleep", "this-string-has-no-end-quote ]
                     ["exit"]`;
-                const result = parseText(trailingCommas);
-                const rows = await asyncIterabletoArray(result.rows());
-                expect(rows).to.eql([
-                    { type: 'print', args: ['Hello World!'], content: '["print", "Hello World!"]' },
-                    {
-                        type: '@error',
-                        error: 'parse',
-                        message: 'Unexpected end of input',
-                        line: 2,
-                        content: '                    [ "sleep", "this-string-has-no-end-quote ]',
-                    },
-                    { type: 'exit', content: '                    ["exit"]' },
-                ]);
+                const parsed = parseText(unmatchedQuote);
+                try {
+                    await asyncIterabletoArray(parsed.rows());
+                    expect.fail('Should reject with parse error.');
+                } catch (err) {
+                    expect(err.message).to.equal('Error parsing line');
+                    if (err instanceof ParseError) {
+                        expect(err.lineNum).to.equal(3);
+                        expect(err.parent?.name).to.equal('SyntaxError');
+                        expect(err.details).to.equal('Unexpected end of input');
+                    } else {
+                        err.fail('Should be instance of ParseError');
+                    }
+                }
             });
             it('with unmatched brackets resulting in positional messages', async () => {
-                const trailingCommas = '[ "sleep", ] ]';
-                const result = parseText(trailingCommas);
-                const rows = await asyncIterabletoArray(result.rows());
-                expect(rows).to.eql([
-                    {
-                        type: '@error',
-                        error: 'parse',
-                        message: 'Unexpected token ] in at position 11',
-                        line: 1,
-                        content: '[ "sleep", ] ]',
-                    },
-                ]);
+                const extraClosingBracket = '[ "sleep" ] ]';
+                const parsed = parseText(extraClosingBracket);
+                try {
+                    await asyncIterabletoArray(parsed.rows());
+                    expect.fail('Should reject with parse error.');
+                } catch (err) {
+                    expect(err.message).to.equal('Error parsing line');
+                    if (err instanceof ParseError) {
+                        expect(err.lineNum).to.equal(1);
+                        expect(err.parent?.name).to.equal('SyntaxError');
+                        expect(err.details).to.equal('Unexpected token ] in at position 12');
+                    } else {
+                        err.fail('Should be instance of ParseError');
+                    }
+                }
             });
         });
         it('should handle Windows newlines', async () => {

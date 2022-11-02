@@ -16,7 +16,7 @@ export function parseIterable(input: AwatedIterable<string>): Parsed {
         async *rows(): AsyncIterable<Command> {
             let idx = 0;
             for await (const item of input) {
-                yield parseSingleCommand(item, idx);
+                yield parseSingleCommand(item, idx + 1);
                 idx++;
             }
         },
