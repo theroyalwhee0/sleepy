@@ -1,8 +1,6 @@
 import { isArray, isString } from '@theroyalwhee0/istype';
-import {
-    Command, BlankCommand, CommentCommand, SyntaxErrorCommand,
-    UserCommand, NoopCommand, ParseErrorCommand,
-} from './commands';
+import { BlankCommand, Command, CommentCommand, NoopCommand, UserCommand } from './commands';
+import { ParseError } from './errors/parseerror';
 import { AwatedIterable, iterateLines } from './utilities/iter';
 
 export interface Parsed {
@@ -37,13 +35,7 @@ function parseSingleCommand(item: string, lineNum = 0) {
         try {
             data = JSON.parse(text);
         } catch (err) {
-            if (err instanceof Error && err.name === 'SyntaxError') {
-                // If JSON Parse Syntax Error...
-                cmd = new ParseErrorCommand(err, lineNum);
-            } else {
-                // Else rethrow...
-                throw err;
-            }
+            throw new ParseError('Error parsing line', lineNum, err);
         }
         if (!cmd) {
             if (isArray(data)) {
@@ -52,17 +44,17 @@ function parseSingleCommand(item: string, lineNum = 0) {
                 } else if (isString(data[0])) {
                     cmd = UserCommand.create(data as unknown[]);
                 } else {
-                    cmd = new SyntaxErrorCommand('Expected command name to be a string.');
+                    throw new ParseError('Expected command name to be a string', lineNum);
                 }
             } else {
-                cmd = new SyntaxErrorCommand('Expected command.');
+                throw new ParseError('Expected command', lineNum);
             }
         }
     } else {
-        cmd = new SyntaxErrorCommand('Syntax error.');
+        throw new ParseError('Syntax error', lineNum);
     }
     if (!cmd) {
-        throw new Error('Expected command to be populated.');
+        throw new ParseError('Expected command to be populated', lineNum);
     }
     cmd.content = item;
     return cmd;
