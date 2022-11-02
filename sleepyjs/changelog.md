@@ -5,6 +5,8 @@
 - Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
 - Add support for `[ '@set', name, value ]` to set state values.
 - Fixed bug with UserCommand arguments not matching JSON types.
+- Improve error handling.
+- Change line numbers to start at 1.
 - Improved testing.
 
 

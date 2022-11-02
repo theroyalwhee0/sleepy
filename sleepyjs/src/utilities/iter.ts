@@ -19,7 +19,11 @@ export function* iterateLines(input: string): Iterable<string> {
     }
 }
 
-export async function bufferRows<T>(iter: AsyncIterable<T>, count = Number.MAX_SAFE_INTEGER): Promise<AsyncIterable<T>> {
+export async function bufferRows<T>(iter: AsyncIterable<T>, count?: number | boolean): Promise<AsyncIterable<T>> {
+    if (count === false) {
+        return iter;
+    }
+    count = count === undefined || count === true ? Number.MAX_SAFE_INTEGER : count;
     const buffer: T[] = [];
     const asyncIter = iter[Symbol.asyncIterator]();
     let idx = 0;
