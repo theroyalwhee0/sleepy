@@ -1,6 +1,6 @@
 import { isString } from '@theroyalwhee0/istype';
 import { JsonValue } from '../utilities/json';
-import { Command, CommandType } from './command';
+import { Command } from './command';
 
 export type UserCommandArgumentItem = JsonValue;
 export type UserCommandArgs = UserCommandArgumentItem[];
