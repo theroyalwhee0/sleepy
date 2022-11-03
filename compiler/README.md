@@ -12,45 +12,12 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 `mkdir -p out; ./zzzc ./cases/print.zzz ./out/print.zzzc`
 
 
-## Examples
-```rb
-# Single line comments are supported.
-# They may not be mixed with content.
-
-# The first string in a brackset is the command name. 
-# Here 'print' would be supplied by the caller.
-[ "print", "Hello World!" ]
-
-# Commands starting with '$' are set commands.
-# The next line sets 'John Doe' with the key 'name' in the global state.
-[ "$name", "John Doe" ]
-
-# Commands starting with '@' are language commands.
-# This is a noop.
-[ "@noop" ]
-
-# Empty lines and empty bracket sets are noops.
-[]
-
-# Tabs and spaces are ignored outside of strings.
-      [   ]
-
-# Trailling commas are allowed.
-[ "$counter", 1 ],
-
-# Values may be any valid JSON type, without newlines.
-[ "print", { "this-is-an-object": true } ]
-```
-
 
 ## Links
 - Sleep Script: https://github.com/theroyalwhee0/sleepy
-- GitHub: https://github.com/theroyalwhee0/sleepy/tree/main/zzzc
-- NPM: https://www.npmjs.com/package/@theroyalwhee0/zzzc
-- Changelog: https://github.com/theroyalwhee0/sleepy/blob/main/zzzc/changelog.md
 
 
 ## Legal & License
 Copyright 2022 Adam Mill
 
-This library is released under Apache 2 license. See [LICENSE](https://github.com/theroyalwhee0/sleepyjs/blob/master/LICENSE) for more details.
+This library is released under Apache 2 license. See [LICENSE]https://github.com/theroyalwhee0/sleepy/blob/main/compiler/LICENSE) for more details.

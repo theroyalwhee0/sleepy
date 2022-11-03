@@ -14,7 +14,7 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 
 ## Goals
-- Simple to impliment parser and execute scripts.
+- Simple to implement parser and execute scripts.
 - Guarantee that script will exit.
 
 
@@ -25,8 +25,7 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 
 ## Examples
 ```rb
-# Single line comments are supported.
-# They may not be mixed with content.
+# Single full line comments are supported.
 
 # The first string in a bracket set is the command name. 
 # Here 'print' would be supplied by the caller.
@@ -46,7 +45,7 @@ Sleepy Script is a simple scripting system meant to be used when building lists 
 # Tabs and spaces are ignored outside of strings.
       [   ]
 
-# Trailling commas are allowed.
+# Trailing commas are allowed.
 [ "$counter", 1 ],
 
 # Values may be any valid JSON type, without newlines.
