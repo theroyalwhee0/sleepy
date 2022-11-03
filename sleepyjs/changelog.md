@@ -1,15 +1,19 @@
 # Changelog
 
 ## [Unreleased]
-### Changed
-- Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
+- Nothing
+
+
+## [0.0.5] - 2022-11-03
+### Added
 - Add validateNow option to compile and parse.
 - Add support for `[ '@set', name, value ]` to set state values.
+### Changed
+- Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
 - Fixed bug with UserCommand arguments not matching JSON types.
-- Improve error handling.
 - Change line numbers to start at 1.
+- Improve error handling.
 - Improved testing.
-
 
 ## [0.0.4] - 2022-10-31
 ### Changed
