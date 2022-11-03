@@ -37,7 +37,7 @@
     "lint": "eslint .",
     "test": "mocha --recursive --check-leaks --extension ts --require ts-node/register test/",
     "test-watch": "mocha --reporter dot --recursive --check-leaks --extension ts --require ts-node/register --watch-files test/,src/ --watch test/",
-    "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test",
+    "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test && npm publish --dry-run",
     "audit": "npm audit --omit dev"
   }
 }
