@@ -3,7 +3,12 @@
   "version": "0.0.5",
   "description": "Sleepy Script JS Library",
   "main": "dist/index.js",
-  "license": "UNLICENCED",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "https://github.com/theroyalwhee0/sleepy/blob/main/sleepyjs/LICENSE"
+    }
+  ],
   "author": "Adam Mill <hismajesty@theroyalwhee.com>",
   "devDependencies": {
     "@types/chai": "4.3.1",

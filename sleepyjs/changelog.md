@@ -12,6 +12,7 @@
 - Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
 - Fixed bug with UserCommand arguments not matching JSON types.
 - Change line numbers to start at 1.
+- Fix license in package.json to match LICENSE file.
 - Improve error handling.
 - Improved testing.
 
