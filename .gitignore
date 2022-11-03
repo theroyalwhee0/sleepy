@@ -12,8 +12,9 @@ coverage/
 .next/
 out/
 
-# production
+# build artifacts
 build/
+trivialsleepygo
 
 # misc
 .DS_Store

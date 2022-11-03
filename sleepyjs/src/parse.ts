@@ -1,62 +1,69 @@
-import { Command, BlankCommand, CommentCommand, SyntaxErrorCommand, NoopCommand, ParseErrorCommand } from './commands/all';
-import { isArray } from '@theroyalwhee0/istype';
-import { UserCommand } from './commands';
-import { AwatedIterable } from './utilities/iter';
+import { isArray, isString } from '@theroyalwhee0/istype';
+import { BlankCommand, Command, CommentCommand, NoopCommand, UserCommand } from './commands';
+import { ParseError } from './errors/parseerror';
+import { bufferIterable, AwatedIterable, iterateLines } from './utilities/iter';
+
+export type ParseOptions = {
+    validateNow?: boolean // true = validate now, false or undefined validates as it streams
+};
 
 export interface Parsed {
-    rows: Command[],
+    rows: AsyncIterable<Command>,
 }
 
-export async function parseText(input: string): Promise<Parsed> {
-    const lines = input === '' ? [] : input.split(/\r\n|\n/);
-    return parseIterable(lines);
+export async function parseText(input: string, options?: ParseOptions): Promise<Parsed> {
+    const iter = iterateLines(input);
+    return parseIterable(iter, options);
 }
 
-export async function parseIterable(input: AwatedIterable<string>): Promise<Parsed> {
-    const result: Parsed = {
-        rows: [],
+export async function parseIterable(input: AwatedIterable<string>, options?: ParseOptions): Promise<Parsed> {
+    async function* generator(): AsyncIterable<Command> {
+        let idx = 0;
+        for await (const item of input) {
+            yield parseSingleCommand(item, idx + 1);
+            idx++;
+        }
+    }
+    const iterable = generator();
+    const rows = options?.validateNow === true ? await bufferIterable(iterable) : iterable;
+    return {
+        rows,
     };
-    let count = 0;
-    for await (const item of input) {
-        let cmd: Command | undefined = undefined;
-        if (BlankCommand.is(item)) {
-            cmd = new BlankCommand();
-        } else if (CommentCommand.is(item)) {
-            cmd = new CommentCommand();
-        } else if (Command.is(item)) {
-            const text = item.replace(/,$/, '');
-            let data: unknown;
-            try {
-                data = JSON.parse(text);
-            } catch (err) {
-                if (err instanceof Error && err.name === 'SyntaxError') {
-                    // If JSON Parse Syntax Error...
-                    cmd = new ParseErrorCommand(err, count);
-                } else {
-                    // Else rethrow...
-                    throw err;
-                }
-            }
-            if (!cmd) {
-                if (isArray(data)) {
-                    if (data.length === 0) {
-                        cmd = new NoopCommand();
-                    } else {
-                        cmd = UserCommand.create(data as unknown[]);
-                    }
-                } else {
-                    cmd = new SyntaxErrorCommand('Expected command.');
-                }
-            }
-        } else {
-            cmd = new SyntaxErrorCommand('Syntax error.');
+}
+
+function parseSingleCommand(item: string, lineNum = 0) {
+    let cmd: Command | undefined = undefined;
+    if (BlankCommand.is(item)) {
+        cmd = new BlankCommand();
+    } else if (CommentCommand.is(item)) {
+        cmd = new CommentCommand();
+    } else if (Command.is(item)) {
+        const text = item.replace(/,$/, '');
+        let data: unknown;
+        try {
+            data = JSON.parse(text);
+        } catch (err) {
+            throw new ParseError('Error parsing line', lineNum, err);
         }
         if (!cmd) {
-            throw new Error('Expected command to be populated.');
+            if (isArray(data)) {
+                if (data.length === 0) {
+                    cmd = new NoopCommand();
+                } else if (isString(data[0])) {
+                    cmd = UserCommand.create(data as unknown[]);
+                } else {
+                    throw new ParseError('Expected command name to be a string', lineNum);
+                }
+            } else {
+                throw new ParseError('Expected command', lineNum);
+            }
         }
-        count += 1;
-        cmd.content = item;
-        result.rows.push(cmd);
+    } else {
+        throw new ParseError('Syntax error', lineNum);
     }
-    return result;
+    if (!cmd) {
+        throw new ParseError('Expected command to be populated', lineNum);
+    }
+    cmd.content = item;
+    return cmd;
 }

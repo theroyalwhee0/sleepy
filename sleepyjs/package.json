@@ -1,18 +1,25 @@
 {
   "name": "@theroyalwhee0/sleepyjs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Sleepy Script JS Library",
   "main": "dist/index.js",
-  "license": "UNLICENCED",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "https://github.com/theroyalwhee0/sleepy/blob/main/sleepyjs/LICENSE"
+    }
+  ],
   "author": "Adam Mill <hismajesty@theroyalwhee.com>",
   "devDependencies": {
     "@types/chai": "4.3.1",
+    "@types/chai-as-promised": "7.1.5",
     "@types/deep-eql": "4.0.0",
     "@types/mocha": "9.1.1",
     "@types/sinon": "10.0.12",
     "@typescript-eslint/eslint-plugin": "5.30.5",
     "@typescript-eslint/parser": "5.30.5",
     "chai": "4.3.6",
+    "chai-as-promised": "7.1.1",
     "eslint": "8.25.0",
     "mocha": "10.0.0",
     "sinon": "14.0.0",
@@ -30,7 +37,7 @@
     "lint": "eslint .",
     "test": "mocha --recursive --check-leaks --extension ts --require ts-node/register test/",
     "test-watch": "mocha --reporter dot --recursive --check-leaks --extension ts --require ts-node/register --watch-files test/,src/ --watch test/",
-    "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test",
+    "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test && npm publish --dry-run",
     "audit": "npm audit --omit dev"
   }
 }

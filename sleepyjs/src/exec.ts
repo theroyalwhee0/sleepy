@@ -1,45 +1,68 @@
-import { AwatedIterable } from './utilities/iter';
+import { isString } from '@theroyalwhee0/istype';
+import { Compiled } from './compile';
+import { ExecError } from './errors/execerror';
 import { JsonValue } from './utilities/json';
 
 
-export type SleepyState<T = unknown> = {
-    [key: string]: T,
+export type SleepyState = {
+    [key: string]: JsonValue,
 }
 
-export type SleepyContext = {
-    callCount: number,
+export type SleepyContext<TState extends SleepyState = SleepyState> = {
+    lineNum: number,
+    state: TState,
 }
 
 export type Evaluator<TState extends SleepyState = SleepyState> = (
-    ctx: SleepyContext,
-    state: TState,
+    ctx: SleepyContext<TState>,
     command: string,
     ...args: JsonValue[]
 ) => Awaited<void>;
 
-export async function execIterable<TState extends SleepyState>(
-    input: AwatedIterable<string>,
+
+export async function execCompiled<TState extends SleepyState = SleepyState>(
+    compiled: Compiled,
     evaluator: Evaluator<TState>
 ): Promise<{ state: TState }> {
-    const ctx: SleepyContext = {
-        callCount: 0,
-    };
     const state: TState = {} as TState;
-    for await (const item of input) {
-        const [command, ...rest] = JSON.parse(item);
+    const ctx: SleepyContext<TState> = {
+        lineNum: 0,
+        state,
+    };
+    for await (const item of compiled.rows) {
+        ctx.lineNum += 1;
+        if (item.length === 0) {
+            throw new ExecError('Expected row to have a command name', ctx.lineNum);
+        }
+        const [command, ...rest] = item;
+        if (!isString(command)) {
+            throw new ExecError('Expected command name to be a string', ctx.lineNum);
+        }
         const ch = command[0] || '';
         if (ch === '@') {
             // Ignore language commands.
-            continue;
+            switch (command) {
+                case '@set': {
+                    if (!isString(rest[0])) {
+                        throw new ExecError('Expected key name to be a string', ctx.lineNum);
+                    }
+                    const key = (rest[0] || '');
+                    (state as SleepyState)[key] = rest[1];
+                    break;
+                }
+            }
         } else if (ch === '$') {
             // Set state item.
-            const key: keyof TState = command.replace(/^\$/, '');
-            state[key] = rest[0];
+            const key = command.replace(/^\$/, '');
+            (state as SleepyState)[key] = rest[0];
         } else {
             // Call the evaluator.
-            await evaluator(ctx, state, command, ...rest);
+            try {
+                await evaluator(ctx, command, ...rest);
+            } catch (err) {
+                throw new ExecError(err.message, ctx.lineNum, err);
+            }
         }
-        ctx.callCount += 1;
     }
     return { state };
 }

@@ -1,0 +1,1 @@
+{"version":3,"file":"execerror.js","sourceRoot":"","sources":["../../src/errors/execerror.ts"],"names":[],"mappings":";;;AAAA,+CAA4C;AAE5C,MAAa,SAAU,SAAQ,yBAAW;IACtC,YAAY,OAAO,GAAG,0CAA0C,EAAE,OAAO,GAAG,CAAC,EAAE,KAAa;QACxF,KAAK,CAAC,OAAO,EAAE,OAAO,EAAE,KAAK,CAAC,CAAC;IACnC,CAAC;CACJ;AAJD,8BAIC"}

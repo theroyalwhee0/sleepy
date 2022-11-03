@@ -1,4 +1,4 @@
-import { Command, CommandType } from '.';
+import { Command, CommandType } from './command';
 import { JsonValue } from '../utilities/json';
 
 export class NoopCommand extends Command {
@@ -6,6 +6,12 @@ export class NoopCommand extends Command {
 }
 
 export class CommentCommand extends NoopCommand {
+
+    constructor(content?: string) {
+        super();
+        this.content = content;
+    }
+
     get comment(): string {
         let text = '';
         if (this.content) {
