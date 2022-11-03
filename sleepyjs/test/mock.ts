@@ -23,22 +23,32 @@ export async function asyncIterabletoArray<T>(iter: AsyncIterable<T>): Promise<A
 }
 
 
-export function mockParsed(commands: Command[] = []): Parsed {
-    return {
-        async *rows(): AsyncIterable<Command> {
-            for (const item of commands) {
+export function mockParsed(commands: (Error | Command)[] = []): Parsed {
+    async function* makeRows(): AsyncIterable<Command> {
+        for (const item of commands) {
+            if (item instanceof Error) {
+                throw item;
+            } else {
                 yield item;
             }
-        },
+        }
+    }
+    return {
+        rows: makeRows(),
     };
 }
 
-export function mockCompiled(rows: CompiledRow[] = []): Compiled {
-    return {
-        async *rows(): AsyncIterable<CompiledRow> {
-            for (const item of rows) {
+export function mockCompiled(rows: (Error | CompiledRow)[] = []): Compiled {
+    async function* makeRows(): AsyncIterable<CompiledRow> {
+        for (const item of rows) {
+            if (item instanceof Error) {
+                throw item;
+            } else {
                 yield item;
             }
-        },
+        }
+    }
+    return {
+        rows: makeRows(),
     };
 }

@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
+- Add validateNow option to compile and parse.
 - Add support for `[ '@set', name, value ]` to set state values.
 - Fixed bug with UserCommand arguments not matching JSON types.
 - Improve error handling.

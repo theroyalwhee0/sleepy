@@ -13,12 +13,12 @@ describe('parse', () => {
             expect(parseIterable).to.be.a('function');
         });
         it('should parse empty script', async () => {
-            const result = parseIterable([]);
-            expect(result).to.be.an('object');
-            expect(result.rows).to.be.a('function');
-            const rows = await asyncIterabletoArray(result.rows());
-            expect(rows).to.eql([
-            ]);
+            const parsed = await parseIterable([]);
+            expect(parsed).to.be.an('object');
+            expect(typeof parsed.rows).to.equal('object');
+            expect(parsed.rows[Symbol.asyncIterator]).to.be.a('function');
+            const rows = await asyncIterabletoArray(parsed.rows);
+            expect(rows).to.eql([]);
         });
         it('should support async iterables', async () => {
             const noopData = [
@@ -27,9 +27,9 @@ describe('parse', () => {
                 '  ["@noop"]',
             ];
             const iter = mockAsyncIterable(noopData);
-            const result = parseIterable(iter);
-            expect(result).to.be.an('object');
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseIterable(iter);
+            expect(parsed).to.be.an('object');
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect(rows).to.eql([
                 { type: '@noop', content: '["@noop"]' },
                 { type: '@noop', content: ' ["@noop"]' },
@@ -42,20 +42,19 @@ describe('parse', () => {
             expect(parseText).to.be.a('function');
         });
         it('should parse empty script', async () => {
-            const result = parseText('');
-            expect(result).to.be.an('object');
-            const rows = await asyncIterabletoArray(result.rows());
-            expect(rows).to.eql([
-            ]);
+            const parsed = await parseText('');
+            expect(parsed).to.be.an('object');
+            const rows = await asyncIterabletoArray(parsed.rows);
+            expect(rows).to.eql([]);
         });
         it('should handle noop and blank lines', async () => {
             const noopText = `[]
 
                 [ ]
                 []`;
-            const result = parseText(noopText);
-            expect(result).to.be.an('object');
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseText(noopText);
+            expect(parsed).to.be.an('object');
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect(rows).to.eql([
                 { type: '@noop', content: '[]' },
                 { type: '@noop', content: '' },
@@ -67,8 +66,8 @@ describe('parse', () => {
             const noopText = `#[]
                 []
                 # Hello World!`;
-            const result = parseText(noopText);
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseText(noopText);
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect([...rows]).to.eql([
                 { type: '@noop', comment: '[]', content: '#[]' },
                 { type: '@noop', content: '                []' },
@@ -79,8 +78,8 @@ describe('parse', () => {
             const trailingCommas = `[],
                 []
                 [],`;
-            const result = parseText(trailingCommas);
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseText(trailingCommas);
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect(rows).to.eql([
                 { type: '@noop', content: '[],' },
                 { type: '@noop', content: '                []' },
@@ -92,8 +91,8 @@ describe('parse', () => {
                 [ "sleep", 50 ]
                 [ "check", { "gt": 32, "lt": 293} ]
                 ["exit"]`;
-            const result = parseText(trailingCommas);
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseText(trailingCommas);
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect(rows).to.eql([
                 { type: 'print', args: ['Hello World!'], content: '["print", "Hello World!"]' },
                 { type: 'sleep', args: [50], content: '                [ "sleep", 50 ]' },
@@ -101,15 +100,15 @@ describe('parse', () => {
                 { type: 'exit', content: '                ["exit"]' },
             ]);
         });
-        describe('should handle malformed commands', () => {
+        describe('should handle malformed lines', () => {
             it('with unmatched quotes', async () => {
                 const unmatchedQuote = `["print", "Hello World!"]
                     # There is an unmatched quote in the next line
-                    [ "sleep", "this-string-has-no-end-quote ]
+                    [ "do", "this-string-has-no-end-quote ]
                     ["exit"]`;
-                const parsed = parseText(unmatchedQuote);
+                const parsed = await parseText(unmatchedQuote);
                 try {
-                    await asyncIterabletoArray(parsed.rows());
+                    await asyncIterabletoArray(parsed.rows);
                     expect.fail('Should reject with parse error.');
                 } catch (err) {
                     expect(err.message).to.equal('Error parsing line');
@@ -124,9 +123,9 @@ describe('parse', () => {
             });
             it('with unmatched brackets resulting in positional messages', async () => {
                 const extraClosingBracket = '[ "sleep" ] ]';
-                const parsed = parseText(extraClosingBracket);
+                const parsed = await parseText(extraClosingBracket);
                 try {
-                    await asyncIterabletoArray(parsed.rows());
+                    await asyncIterabletoArray(parsed.rows);
                     expect.fail('Should reject with parse error.');
                 } catch (err) {
                     expect(err.message).to.equal('Error parsing line');
@@ -144,13 +143,21 @@ describe('parse', () => {
             const noopText = '[]\r\n' +
                 '   [ ],\r\n' +
                 ' [    ]\r\n';
-            const result = parseText(noopText);
-            const rows = await asyncIterabletoArray(result.rows());
+            const parsed = await parseText(noopText);
+            const rows = await asyncIterabletoArray(parsed.rows);
             expect(rows).to.eql([
                 { type: '@noop', content: '[]' },
                 { type: '@noop', content: '   [ ],' },
                 { type: '@noop', content: ' [    ]' },
             ]);
+        });
+        it('should support validateNow option', async () => {
+            const unmatchedQuote = `["print", "Hello World!"]
+                # There is an unmatched quote in the next line
+                [ "do", "this-string-has-no-end-quote ]
+                ["exit"]`;
+            const result = parseText(unmatchedQuote, { validateNow: true });
+            return expect(result).to.eventually.be.rejectedWith(/Error parsing line/);
         });
     });
 });

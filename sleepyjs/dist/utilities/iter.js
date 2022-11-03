@@ -1,7 +1,7 @@
-export type AwatedIterable<T> = AsyncIterable<T> | Iterable<T>;
-
-
-export function* iterateLines(input: string): Iterable<string> {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bufferIterable = exports.iterateLines = void 0;
+function* iterateLines(input) {
     if (input === '') {
         return;
     }
@@ -18,13 +18,13 @@ export function* iterateLines(input: string): Iterable<string> {
         idx = found;
     }
 }
-
-export async function bufferIterable<T>(iter: AsyncIterable<T>, count?: number | boolean): Promise<AsyncIterable<T>> {
+exports.iterateLines = iterateLines;
+async function bufferIterable(iter, count) {
     if (count === false) {
         return iter;
     }
     count = count === undefined || count === true ? Number.MAX_SAFE_INTEGER : count;
-    const buffer: T[] = [];
+    const buffer = [];
     const asyncIter = iter[Symbol.asyncIterator]();
     let idx = 0;
     let next = true;
@@ -33,16 +33,18 @@ export async function bufferIterable<T>(iter: AsyncIterable<T>, count?: number |
             const { value, done } = await asyncIter.next();
             if (done === true) {
                 next = false;
-            } else {
+            }
+            else {
                 buffer.push(value);
             }
-        } else {
+        }
+        else {
             next = false;
         }
         idx++;
     }
     const continueIter = { [Symbol.asyncIterator]: () => asyncIter };
-    async function* bufferedAsyncIterable(): AsyncIterable<T> {
+    async function* bufferedAsyncIterable() {
         for await (const item of buffer) {
             // Yield buffered items.
             yield item;
@@ -54,3 +56,5 @@ export async function bufferIterable<T>(iter: AsyncIterable<T>, count?: number |
     }
     return bufferedAsyncIterable();
 }
+exports.bufferIterable = bufferIterable;
+//# sourceMappingURL=iter.js.map

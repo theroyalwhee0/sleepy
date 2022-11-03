@@ -29,7 +29,7 @@ export async function execCompiled<TState extends SleepyState = SleepyState>(
         lineNum: 0,
         state,
     };
-    for await (const item of compiled.rows()) {
+    for await (const item of compiled.rows) {
         ctx.lineNum += 1;
         if (item.length === 0) {
             throw new ExecError('Expected row to have a command name', ctx.lineNum);

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
-import { iterateLines, bufferRows } from '../../src/utilities/iter';
+import { iterateLines, bufferIterable } from '../../src/utilities/iter';
 import { asyncIterabletoArray } from '../mock';
 
 describe('utilities', () => {
@@ -31,9 +31,9 @@ describe('utilities', () => {
                 }
             });
         });
-        describe('bufferRows', () => {
+        describe('bufferIterable', () => {
             it('should be an function', () => {
-                expect(bufferRows).to.be.a('function');
+                expect(bufferIterable).to.be.a('function');
             });
             it('should buffer all rows', async () => {
                 const bufferedIdx: number[] = [];
@@ -45,7 +45,7 @@ describe('utilities', () => {
                 }
                 const rows = iterable();
                 expect(bufferedIdx).to.eql([]);
-                const buffered = await bufferRows(rows);
+                const buffered = await bufferIterable(rows);
                 expect(bufferedIdx).to.eql([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
                 const final = await asyncIterabletoArray(buffered);
                 expect(final).to.eql([1, 3, 5, 7, 9, 11, 13, 15, 17, 19]);
@@ -60,7 +60,7 @@ describe('utilities', () => {
                 }
                 const rows = iterable();
                 expect(bufferedIdx).to.eql([]);
-                const buffered = await bufferRows(rows, 5);
+                const buffered = await bufferIterable(rows, 5);
                 expect(bufferedIdx).to.eql([0, 1, 2, 3, 4]);
                 const final = await asyncIterabletoArray(buffered);
                 expect(final).to.eql([1, 3, 5, 7, 9, 11, 13, 15, 17, 19]);
