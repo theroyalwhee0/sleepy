@@ -15,8 +15,8 @@ describe('argv', () => {
                 '/home/user/.nvm/versions/node/v18.0.0/bin/node',
                 '/home/user/sleepy/compiler/dist/cli.js',
                 './noop.zzz',
-                './out/'
-              ];
+                './noop.zzzc',
+            ];
             const result = getArgv(argv, false);
             expect(result).to.be.an('object');
         });

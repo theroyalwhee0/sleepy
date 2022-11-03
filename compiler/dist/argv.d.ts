@@ -4,5 +4,9 @@ export interface ArgvShape {
     $0: string;
     source: string;
     target: string;
+    details: boolean;
+    o: boolean;
+    optimize: boolean;
+    overwrite: boolean;
 }
 export declare function getArgv(value?: string[], exit?: boolean): ArgvShape;

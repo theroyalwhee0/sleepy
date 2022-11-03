@@ -10,7 +10,22 @@ function getArgv(value, exit = true) {
     value = value ?? process.argv;
     return (0, yargs_1.default)((0, helpers_1.hideBin)(value))
         .scriptName('zzzc')
-        .command('$0 <source> <target> [args]', 'Compile the source to the target location.')
+        .command('$0 <source> <target> [args]', 'Compile the source to the target location.', (yargs) => {
+        return yargs
+            // Details.
+            .boolean('details')
+            .describe('details', 'Add build details to output')
+            .default('details', true)
+            // Optimize
+            .boolean('optimize')
+            .describe('optimize', 'Optimize output')
+            .default('optimize', true)
+            // Overwrite
+            .boolean('overwrite')
+            .describe('overwrite', 'Overwrite target if it exists')
+            .alias('o', 'overwrite')
+            .default('overwrite', false);
+    })
         .demandCommand(1)
         .help()
         .alias('h', 'help')
