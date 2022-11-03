@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@theroyalwhee0/istype": "3.0.2",
-    "@theroyalwhee0/sleepyjs": "0.0.4",
+    "@theroyalwhee0/sleepyjs": "0.0.5",
     "yargs": "17.6.0"
   },
   "scripts": {
@@ -35,7 +35,6 @@
     "test": "mocha --recursive --check-leaks --extension ts --require ts-node/register test/",
     "test-watch": "mocha --reporter dot --recursive --check-leaks --extension ts --require ts-node/register --watch-files test/,src/ --watch test/",
     "dryrun": "npm run rebuild && npm prune && npm audit && npm run lint && npm test",
-    "audit": "npm audit --omit dev",
-    "zzzc": "npm run build && node dist/cli.js --"
+    "audit": "npm audit --omit dev"
   }
 }

@@ -1,0 +1,2 @@
+[ "@set", "name", "John Smith" ]
+[ "$counter", 0 ]
