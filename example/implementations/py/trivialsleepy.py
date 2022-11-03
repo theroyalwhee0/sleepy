@@ -18,11 +18,10 @@ async def trivialSleepy(input, evaluator):
     state = { }
     for _idx, [first, *rest] in enumerate(compiled):
         ch = first[0]
-        if first == '@feature':
-            raise Exception('trivialSleepy does not support features')
-        elif ch == '@':
-            # Ignore language commands.
-            pass
+        if ch == '@':
+            if first == '@set':
+                # Declare state variables.
+                state[rest[0]] = rest[1]
         elif ch == '$':
             # Declare state variables.
             state[first[1:]] = rest[0]
@@ -41,7 +40,7 @@ async def main():
 
                 [],
                 ["@noop"],
-                ["$name", "Bob Smith"]
+                ["@set", "name", "Bob Smith"]
                 ["$counter", 0]
                 ["add"]
                 ["print", "Hello World!"]

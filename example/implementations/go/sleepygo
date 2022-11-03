@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+go build . && go run .
+[ -f ./trivialsleepygo ] && rm ./trivialsleepygo
+echo "> NOTE: This script deletes the generated build"

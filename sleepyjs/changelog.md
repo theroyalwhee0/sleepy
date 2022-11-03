@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+- Nothing
+
+
+## [0.0.5] - 2022-11-03
+### Added
+- Add validateNow option to compile and parse.
+- Add support for `[ '@set', name, value ]` to set state values.
+### Changed
+- Refactored parse, compile, exec and serialize around async iterators so that scripts are streamed.
+- Fixed bug with UserCommand arguments not matching JSON types.
+- Change line numbers to start at 1.
+- Fix license in package.json to match LICENSE file.
+- Improve error handling.
+- Improved testing.
+
 ## [0.0.4] - 2022-10-31
 ### Changed
 - Improve ErrorCommand details.
@@ -24,6 +40,3 @@
 - Compile from string or Iterable<string>.
 - Serialize compiled code to string.
 - Initial release.
-
-
-## [Unreleased]

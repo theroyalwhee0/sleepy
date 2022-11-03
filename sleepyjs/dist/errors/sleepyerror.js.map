@@ -1,0 +1,1 @@
+{"version":3,"file":"sleepyerror.js","sourceRoot":"","sources":["../../src/errors/sleepyerror.ts"],"names":[],"mappings":";;;AAAA,MAAa,WAAY,SAAQ,KAAK;IAKlC,YAAY,OAAe,EAAE,OAAO,GAAG,CAAC,EAAE,KAAa;QACnD,KAAK,CAAC,OAAO,CAAC,CAAC;QAHnB,YAAO,GAAG,CAAC,CAAC;QAIR,IAAI,CAAC,OAAO,GAAG,OAAO,CAAC;QACvB,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;IACxB,CAAC;CACJ;AAVD,kCAUC"}
